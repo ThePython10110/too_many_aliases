@@ -1,7 +1,9 @@
 # Too Many Aliases
 
 [ContentDB](https://content.minetest.net/packages/ThePython/too_many_aliases)
+
 [GitHub](https://github.com/ThePython10110/too_many_aliases)
+
 [Direct Download](https://content.minetest.net/packages/ThePython/too_many_aliases/releases/18461)
 
 This mod "fixes" MineClone's inconsistent itemstrings.
