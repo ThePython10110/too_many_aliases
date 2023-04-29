@@ -1,0 +1,3 @@
+# The prefix for all aliased items (default is "mineclone:")
+# Should include a colon, unless blank.
+too_many_aliases_prefix (Prefix) string mineclone:
