@@ -775,6 +775,9 @@ local function register_aliases(alias, itemstring)
 end
 
 minetest.register_on_mods_loaded(function()
+    for old, new in pairs(aliases) do
+        register_aliases(new, old)
+    end
     for itemstring, def in pairs(minetest.registered_items) do
         local _, _, mod_name, item_name = itemstring:find("([%d_%l]+):([%d_%l]+)")
         --minetest.log(tostring(mod_name))
@@ -791,7 +794,7 @@ minetest.register_on_mods_loaded(function()
         ) then  --only change MineClone items, not things from other mods
             local new_item_name = aliases[itemstring]
             if new_item_name then
-                register_aliases(new_item_name, itemstring)
+                --don't register aliases because it's already been registered.
                 if mod_name ~= "mcl_stairs" then --don't check for stair/slab variants if it's already a stair/slab
                     local slab_itemstring = itemstring:gsub("[%d_%l]+:", "mcl_stairs:slab_")
                     if minetest.registered_items[slab_itemstring] then
