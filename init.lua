@@ -762,12 +762,104 @@ local mob_sub = {
     enderdragon = "ender_dragon",
 }
 
---750 lines (some blank, of course)... wow. I'm glad that things like copy and paste, find and replace, and regexes exist or I would NEVER do this.
+local whitelisted_mods = {
+    ["doc_identifier"] = true,
+    ["mcl_amethyst"] = true,
+    ["mcl_anvils"] = true,
+    ["mcl_armor"] = true,
+    ["mcl_armor_stand"] = true,
+    ["mcl_bamboo"] = true,
+    ["mcl_banners"] = true,
+    ["mcl_barrels"] = true,
+    ["mcl_beacons"] = true,
+    ["mcl_beds"] = true,
+    ["mcl_books"] = true,
+    ["mcl_bows"] = true,
+    ["mcl_cauldrons"] = true,
+    ["mcl_chests"] = true,
+    ["mcl_clock"] = true,
+    ["mcl_cocoas"] = true,
+    ["mcl_colorblocks"] = true,
+    ["mcl_colors"] = true,
+    ["mcl_comparators"] = true,
+    ["mcl_compass"] = true,
+    ["mcl_composters"] = true,
+    ["mcl_copper"] = true,
+    ["mcl_core"] = true,
+    ["mcl_crafting_table"] = true,
+    ["mcl_crimson"] = true,
+    ["mcl_deepslate"] = true,
+    ["mcl_dispensers"] = true,
+    ["mcl_doors"] = true,
+    ["mcl_droppers"] = true,
+    ["mcl_dye"] = true,
+    ["mcl_enchanting"] = true,
+    ["mcl_end"] = true,
+    ["mcl_experience"] = true,
+    ["mcl_farming"] = true,
+    ["mcl_fences"] = true,
+    ["mcl_fire"] = true,
+    ["mcl_fireworks"] = true,
+    ["mcl_fishing"] = true,
+    ["mcl_fletching_table"] = true,
+    ["mcl_flowerpots"] = true,
+    ["mcl_flowers"] = true,
+    ["mcl_furnaces"] = true,
+    ["mcl_grindstone"] = true,
+    ["mcl_hamburger"] = true,
+    ["mcl_heads"] = true,
+    ["mcl_honey"] = true,
+    ["mcl_hoppers"] = true,
+    ["mcl_itemframes"] = true,
+    ["mcl_jukebox"] = true,
+    ["mcl_lanterns"] = true,
+    ["mcl_lectern"] = true,
+    ["mcl_lightning_rods"] = true,
+    ["mcl_loom"] = true,
+    ["mcl_mangrove"] = true,
+    ["mcl_maps"] = true,
+    ["mcl_minecarts"] = true,
+    ["mcl_mobitems"] = true,
+    ["mcl_mud"] = true,
+    ["mcl_mushrooms"] = true,
+    ["mcl_nether"] = true,
+    ["mcl_observers"] = true,
+    ["mcl_ocean"] = true,
+    ["mcl_paintings"] = true,
+    ["mcl_potions"] = true,
+    ["mcl_raw_ores"] = true,
+    ["mcl_sculk"] = true,
+    ["mcl_shields"] = true,
+    ["mcl_signs"] = true,
+    ["mcl_smithing_table"] = true,
+    ["mcl_smoker"] = true,
+    ["mcl_sponges"] = true,
+    ["mcl_spyglass"] = true,
+    ["mcl_stairs"] = true,
+    ["mcl_stonecutter"] = true,
+    ["mcl_sus_stew"] = true,
+    ["mcl_target"] = true,
+    ["mcl_tnt"] = true,
+    ["mcl_tools"] = true,
+    ["mcl_throwing"] = true,
+    ["mcl_torches"] = true,
+    ["mcl_totems"] = true,
+    ["mcl_villages"] = true,
+    ["mcl_walls"] = true,
+    ["mcl_wool"] = true,
+    ["mclx_core"] = true,
+    ["mclx_fences"] = true,
+    ["mclx_stairs"] = true,
+    ["mobs_mc"] = true,
+    ["screwdriver"] = true,
+    ["xpanes"] = true,
+}
 
 
---the on_mods_loaded thing may not be necessary.
+-- the on_mods_loaded thing may not be necessary.
 
 local function register_aliases(alias, itemstring)
+    if minetest.registered_aliases[alias] then return end
     minetest.register_alias("mineclone:"..alias, itemstring)
     if prefix ~= "mineclone:" then
         minetest.register_alias(prefix..alias, itemstring)
@@ -775,9 +867,6 @@ local function register_aliases(alias, itemstring)
 end
 
 minetest.register_on_mods_loaded(function()
-    for old, new in pairs(aliases) do
-        register_aliases(new, old)
-    end
     for itemstring, def in pairs(minetest.registered_items) do
         local _, _, mod_name, item_name = itemstring:find("([%d_%l]+):([%d_%l]+)")
         --minetest.log(tostring(mod_name))
@@ -786,15 +875,10 @@ minetest.register_on_mods_loaded(function()
             mod_name = ""
             item_name = itemstring
         end
-        if (
-            mod_name:sub(1,3) == "mcl"
-            or mod_name:sub(1,7) == "mesecon"
-            or mod_name == "mobs_mc"
-            or mod_name == "xpanes"
-        ) then  --only change MineClone items, not things from other mods
+        if whitelisted_mods[mod_name] then  --only change MineClone items, not things from other mods
             local new_item_name = aliases[itemstring]
             if new_item_name then
-                --don't register aliases because it's already been registered.
+                register_aliases(new_item_name, itemstring)
                 if mod_name ~= "mcl_stairs" then --don't check for stair/slab variants if it's already a stair/slab
                     local slab_itemstring = itemstring:gsub("[%d_%l]+:", "mcl_stairs:slab_")
                     if minetest.registered_items[slab_itemstring] then
