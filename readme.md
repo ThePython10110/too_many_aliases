@@ -12,3 +12,4 @@ Registers aliases for all MineClone items (as of MineClone 2 0.83.0). All aliase
 If the prefix (found in the Minetest settings) is set to nothing, no prefix is required (you could just type `/giveme redstone_block`).
 
 The `mineclone:` prefix is always available, regardless of the setting. This is so mods can depend on this one.
+After doing all this work, I realized that MineClone already does this... I just never knew before because I never had "Item ID debug" turned on.
